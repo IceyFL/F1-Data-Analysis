@@ -11,12 +11,22 @@ def main():
     laps = get_session_laps(session_key)
 
     #get all drivers from session
-    drivers = get_drivers(laps)
+    tempDrivers = get_drivers(laps)
+    driver_laps = []
+    drivers = []
 
     #iterate through drivers and get their lap times
-    for driver in drivers:
-        driver_laps = get_driver_laps(laps, driver)
-        print(driver_laps)
+    for driver in tempDrivers:
+        #get laps of that driver
+        temp = get_driver_laps(laps, driver)
+
+        #only add driver if they have laps
+        if len(temp) > 0:
+            driver_laps.append(temp)
+            drivers.append(driver)
+
+    graph = GUI.create_graph(drivers, driver_laps)
+
 
 #only run main function if this file is run directly
 if __name__ == "__main__":

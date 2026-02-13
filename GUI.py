@@ -1,36 +1,40 @@
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import numpy as np
 
-def create_graph(drivers, driver_laps):
-    # Compute minimum lap time for each driver
-    mins = [np.min(laps) for laps in driver_laps]
+def create_graph(drivers):
+    #create window
+    fig, ax = plt.subplots(figsize=(12, 6))
 
-    # Sort by minimum lap time (fastest first)
-    sorted_indices = np.argsort(mins)
-    drivers = [drivers[i] for i in sorted_indices]
-    driver_laps = [driver_laps[i] for i in sorted_indices]
+    #set labels
+    ax.set_xlabel("Driver") 
+    ax.set_ylabel("Lap Time") 
+    ax.set_title("Driver Lap Time Distribution")
 
-    plt.figure(figsize=(14, 6))
+    #format the lap times to show minutes rather than just seconds
+    ax.yaxis.set_major_formatter( ticker.FuncFormatter(lambda x, pos: f"{int(x//60)}:{x%60:05.2f}") )
 
-    # Create the boxplot with whiskers at min/max
-    bp = plt.boxplot(driver_laps, patch_artist=True, whis=[0, 100])
+    #get driver laps
+    driver_laps = [driver.laps for driver in drivers]
 
-    # Add distinct colors for each box
-    colors = plt.cm.tab20(np.linspace(0, 1, len(driver_laps)))
-    for patch, color in zip(bp['boxes'], colors):
-        patch.set_facecolor(color)
 
-    # Label x-axis with driver numbers
-    plt.xticks(
-        ticks=range(1, len(drivers) + 1),
-        labels=[str(d) for d in drivers],
-        rotation=45,
-        ha='right'
-    )
+    # Create and show the graph also disable the overlay lines, bw method makes it less smooth
+    violinplot = ax.violinplot(driver_laps, bw_method=0.2, widths=0.6, showmeans=False, showmedians=False, showextrema=False)
+    
+    #set the colour of each violin
+    for i in range(len(violinplot["bodies"])): #iterate through each violin
+        body = violinplot["bodies"][i]
 
-    plt.ylabel("Lap Time (seconds)")
-    plt.xlabel("Driver Number")
-    plt.title("Lap Time Distribution by Driver (Sorted by Fastest Lap)")
+        #modify body values
+        body.set_facecolor(drivers[i].color)
+        body.set_edgecolor("black")
+        body.set_alpha(0.8)
 
-    plt.tight_layout()
+
+    #Add driver names to grid
+    ax.set_xticks(np.arange(1, len(drivers) + 1))
+    ax.set_xticklabels([d.name for d in drivers])
+    
+
+    #display graph
     plt.show()

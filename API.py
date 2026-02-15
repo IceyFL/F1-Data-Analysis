@@ -8,14 +8,22 @@ OPENF1 = "https://api.openf1.org/v1/"
 
 
 #get session key of recent session
-def get_recent_session():
+def get_sessions():
     #get current time
     current_date = datetime.datetime.now().isoformat()
     parameters = f"?date_end<{current_date}"
     sessions = requests.get(OPENF1 + "sessions" + parameters).json() #get all completed sessions
 
-    #return the most recent session key
-    return sessions[-1]["session_key"]
+    #get recent session key and name
+    recent_key = sessions[-1]["session_key"]
+    recent_name = str(sessions[-1]["year"]) + " " + sessions[-1]["circuit_short_name"] + " - " + sessions[-1]["session_name"]
+
+    #get session names and keys
+    combList = [(session["session_key"], str(session["year"]) + " " + session["circuit_short_name"] + " - " + session["session_name"]) for session in sessions]
+    combList.reverse() #most recent sessions at top
+
+    #return the most recent session key, name and list of all sesssions
+    return recent_key, recent_name, combList
 
 
 #get all lap times from a session

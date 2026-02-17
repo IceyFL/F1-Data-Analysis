@@ -7,6 +7,8 @@ import tkinter as tk
 
 from functions import get_graph_data
 
+plt.style.use("grayscale")
+
 #create the GUI window
 def create_gui():
     #create window
@@ -32,7 +34,7 @@ def populate_gui(gui, graph, recent_name, sessions):
 
 
     #add label
-    Label = tk.Label(gui, text="Session", bg="#2b2b2b", fg="#ffffff")
+    Label = tk.Label(gui, text="Session")
     Label.place(x=10, y=35)
 
 
@@ -43,7 +45,7 @@ def populate_gui(gui, graph, recent_name, sessions):
     dropdown.place(x=10, y=60)
 
     #Create a frame to display what is being displayed currently
-    list_frame = tk.Frame(gui, bg="#2b2b2b")
+    list_frame = tk.Frame(gui)
     list_frame.place(x=10, y=100)
 
 
@@ -65,10 +67,10 @@ def populate_gui(gui, graph, recent_name, sessions):
                 return #skip rest of function
 
         #create item to store the label and button
-        row_frame = tk.Frame(list_frame, bg="#2b2b2b")
+        row_frame = tk.Frame(list_frame)
 
         #add label to row
-        lbl = tk.Label(row_frame, text=item, bg="#2b2b2b", fg="#ffffff")
+        lbl = tk.Label(row_frame, text=item)
         lbl.pack(side="left")
 
         #function to remove item from lsit
@@ -77,11 +79,7 @@ def populate_gui(gui, graph, recent_name, sessions):
             added_items.remove(row_frame)
 
         #add a button to the row to remove it
-        btn = tk.Button(row_frame, text="Remove",
-                command=remove_item,
-                bg="#444444", fg="#ffffff",
-                activebackground="#555555",
-                activeforeground="#ffffff")
+        btn = tk.Button(row_frame, text="Remove", command=remove_item)
         btn.pack(side="left", padx=5)
 
         #add the frame
@@ -140,8 +138,6 @@ def create_graph(drivers):
     fig, ax = plt.subplots(figsize=(12, 6))
 
     #make the background dark
-    fig.patch.set_facecolor("#888888") 
-    ax.set_facecolor("#555555")
 
     #set labels
     ax.set_xlabel("Driver") 
@@ -165,7 +161,8 @@ def create_graph(drivers):
         #modify body values
         body.set_facecolor(drivers[i].color)
         body.set_edgecolor("black")
-        body.set_alpha(0.8)
+        body.set_linewidth(0.8)
+        body.set_alpha(0.6)
 
 
     #Add driver names to grid

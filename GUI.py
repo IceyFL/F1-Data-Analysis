@@ -32,7 +32,7 @@ def populate_gui(gui, graph, recent_name, sessions):
 
 
     #add label
-    Label = tk.Label(gui, text="Session")
+    Label = tk.Label(gui, text="Session", bg="#2b2b2b", fg="#ffffff")
     Label.place(x=10, y=35)
 
 
@@ -43,7 +43,7 @@ def populate_gui(gui, graph, recent_name, sessions):
     dropdown.place(x=10, y=60)
 
     #Create a frame to display what is being displayed currently
-    list_frame = tk.Frame(gui)
+    list_frame = tk.Frame(gui, bg="#2b2b2b")
     list_frame.place(x=10, y=100)
 
 
@@ -65,10 +65,10 @@ def populate_gui(gui, graph, recent_name, sessions):
                 return #skip rest of function
 
         #create item to store the label and button
-        row_frame = tk.Frame(list_frame)
+        row_frame = tk.Frame(list_frame, bg="#2b2b2b")
 
         #add label to row
-        lbl = tk.Label(row_frame, text=item)
+        lbl = tk.Label(row_frame, text=item, bg="#2b2b2b", fg="#ffffff")
         lbl.pack(side="left")
 
         #function to remove item from lsit
@@ -77,7 +77,11 @@ def populate_gui(gui, graph, recent_name, sessions):
             added_items.remove(row_frame)
 
         #add a button to the row to remove it
-        btn = tk.Button(row_frame, text="Remove", command=remove_item)
+        btn = tk.Button(row_frame, text="Remove",
+                command=remove_item,
+                bg="#444444", fg="#ffffff",
+                activebackground="#555555",
+                activeforeground="#ffffff")
         btn.pack(side="left", padx=5)
 
         #add the frame
@@ -134,6 +138,10 @@ def populate_gui(gui, graph, recent_name, sessions):
 def create_graph(drivers):
     #create window
     fig, ax = plt.subplots(figsize=(12, 6))
+
+    #make the background dark
+    fig.patch.set_facecolor("#888888") 
+    ax.set_facecolor("#555555")
 
     #set labels
     ax.set_xlabel("Driver") 

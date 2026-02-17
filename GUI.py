@@ -23,7 +23,7 @@ def create_gui():
 #populate GUI with graph and controls
 def populate_gui(gui, graph, recent_name, sessions):
     #add left margin for the menu
-    graph.subplots_adjust(left=0.2)
+    graph.subplots_adjust(left=0.25)
 
     #put the graph on the GUI
     canvas = FigureCanvasTkAgg(graph, master=gui) 
@@ -42,6 +42,13 @@ def populate_gui(gui, graph, recent_name, sessions):
     dropdown = ttk.Combobox(gui, textvariable=opt, values=[s[1] for s in sessions])
     dropdown.place(x=10, y=60)
 
+    #Create a frame to display what is being displayed currently
+    list_frame = tk.Frame(gui)
+    list_frame.place(x=10, y=100)
+
+
+    #create empty list to store what to display
+    added_items = []
 
 
     #function to filter the dropdown list as the user types
@@ -50,31 +57,75 @@ def populate_gui(gui, graph, recent_name, sessions):
         filtered = [d for d in sessions if typed in d[1].lower()] 
         dropdown['values'] = [d[1] for d in filtered]
 
-    
+    #function to add item to list of displayed items
+    def add_to_list(item):
+        #check it is not already in the list
+        for row in added_items: #iterate through already added items
+            if row.winfo_children()[0].cget("text") == item: #check if the label of the row matches the item
+                return #skip rest of function
+
+        #create item to store the label and button
+        row_frame = tk.Frame(list_frame)
+
+        #add label to row
+        lbl = tk.Label(row_frame, text=item)
+        lbl.pack(side="left")
+
+        #function to remove item from lsit
+        def remove_item():
+            row_frame.destroy()
+            added_items.remove(row_frame)
+
+        #add a button to the row to remove it
+        btn = tk.Button(row_frame, text="Remove", command=remove_item)
+        btn.pack(side="left", padx=5)
+
+        #add the frame
+        row_frame.pack(anchor="w")
+        added_items.append(row_frame)
+
     #update graph
     def update_graph(event):
         #get selected session key
         selected_session = event.widget.get()
-        session_key = next(s[0] for s in sessions if s[1] == selected_session)
 
-        #get new graph data
-        drivers = get_graph_data(session_key)
+        #add the session to the list of displayed items
+        add_to_list(selected_session)
 
+        #get a list of all selected sessions
+        selected_sessions = [row.winfo_children()[0].cget("text") for row in added_items]
+
+        #list to store session keys
+        session_keys = []
+
+        #get all session keys
+        for session in selected_sessions:
+            #get the session key for the selected session
+            session_keys.append(next(s[0] for s in sessions if s[1] == session)) 
+
+        #get graph data for all selected sessions
+        drivers = get_graph_data(session_keys)
+        
         #create new graph
         graph = create_graph(drivers)
 
         #add left margin for the new graph
-        graph.subplots_adjust(left=0.2)
+        graph.subplots_adjust(left=0.25)
 
         #update the graph on the GUI
         canvas.figure = graph
         canvas.draw()
+
+
 
     #filter the options when key is typed
     dropdown.bind("<KeyRelease>", filter_list)
 
     #update graph when new option is selected
     dropdown.bind("<<ComboboxSelected>>", update_graph)
+
+    #add recent session to list of displayed items
+    add_to_list(recent_name)
 
     return gui
 

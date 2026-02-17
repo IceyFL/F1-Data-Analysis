@@ -8,7 +8,7 @@ def main():
     recent_key, recent_name, sessions = get_sessions()
 
     #get graph data
-    drivers = get_graph_data(recent_key)
+    drivers = get_graph_data([recent_key])
 
     #create graph
     graph = GUI.create_graph(drivers)
